@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Age Calculator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  font-family:Inter,Segoe UI,Arial,sans-serif;color:#fff;background:#050816;
+}
+.bg{position:fixed;inset:0;z-index:-4;background:linear-gradient(-45deg,#050816,#15103a,#071c32,#240b36);background-size:400% 400%;animation:bgMove 14s ease infinite}
+@keyframes bgMove{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.48;z-index:-3;animation:floatOrb 12s ease-in-out infinite alternate}
+.o1{width:380px;height:380px;background:#7c3aed;left:-100px;top:-100px}
+.o2{width:420px;height:420px;background:#0891b2;right:-130px;bottom:-150px;animation-delay:-4s}
+.o3{width:260px;height:260px;background:#db2777;left:45%;top:40%;animation-delay:-7s}
+@keyframes floatOrb{to{transform:translate(80px,70px) scale(1.18)}}
+#particles{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.particle{position:absolute;bottom:-30px;border-radius:50%;background:rgba(255,255,255,.6);box-shadow:0 0 12px rgba(255,255,255,.5);animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:.7}90%{opacity:.35}100%{transform:translateY(-115vh) translateX(70px);opacity:0}}
+.wrap{
+ width:min(760px,93%);padding:34px;border:1px solid rgba(255,255,255,.14);border-radius:30px;
+ background:rgba(255,255,255,.075);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+ box-shadow:0 25px 80px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.13)
+}
+h1{text-align:center;font-size:clamp(30px,5vw,45px);letter-spacing:-1.5px}
+.sub{text-align:center;color:#ffffffa8;font-size:14px;margin:8px 0 28px}
+.inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field label{display:block;margin:0 0 7px 5px;color:#ffffffa8;font-size:12px}
+input{
+ width:100%;height:56px;border-radius:15px;border:1px solid #ffffff24;background:#ffffff0d;color:#fff;
+ outline:none;padding:0 15px;font-size:17px;transition:.25s
+}
+input::placeholder{color:#ffffff55}
+input:focus{border-color:#a78bfa;box-shadow:0 0 25px #8b5cf63d;background:#ffffff14}
+input::-webkit-inner-spin-button,input::-webkit-outer-spin-button{-webkit-appearance:none}
+button{
+ width:100%;height:56px;margin-top:15px;border:0;border-radius:15px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;
+ background:linear-gradient(120deg,#8b5cf6,#6366f1,#06b6d4);background-size:200% 200%;animation:btnGlow 5s ease infinite;
+ box-shadow:0 12px 35px #6366f14a;transition:.2s
+}
+button:hover{transform:translateY(-2px);box-shadow:0 16px 42px #6366f16b}
+button:active{transform:scale(.99)}
+@keyframes btnGlow{50%{background-position:100% 50%}}
+#error{height:22px;text-align:center;color:#fda4af;font-size:13px;margin-top:10px}
+.results{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;opacity:0;transform:translateY(15px);max-height:0;overflow:hidden;transition:.45s}
+.results.show{opacity:1;transform:none;max-height:400px}
+.card{padding:18px 8px;text-align:center;border-radius:18px;background:#ffffff0d;border:1px solid #ffffff1c}
+.card .num{font-size:clamp(24px,4vw,33px);font-weight:800;background:linear-gradient(120deg,#ddd6fe,#67e8f9);-webkit-background-clip:text;color:transparent}
+.card .lab{font-size:10px;letter-spacing:1.3px;color:#ffffff8c;margin-top:5px;text-transform:uppercase}
+.birthday{
+ margin-top:12px;padding:18px;border-radius:18px;text-align:center;background:#ffffff0d;border:1px solid #ffffff1c;
+ opacity:0;transform:translateY(10px);transition:.45s
+}
+.birthday.show{opacity:1;transform:none}
+.birthday small{color:#ffffff8c;text-transform:uppercase;letter-spacing:1.3px}
+.birthday strong{display:block;margin-top:7px;font-size:18px}
+.birthday span{color:#a5f3fc}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5eead4;margin-right:6px;box-shadow:0 0 10px #5eead4;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media(max-width:600px){
+ .wrap{padding:25px 16px;border-radius:24px}.inputs{gap:7px}input{height:52px;padding:0 9px;font-size:15px}
+ .results{grid-template-columns:repeat(2,1fr)}.card{padding:15px 6px}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div id="particles"></div>
+
+<main class="wrap">
+ <h1>Age Calculator</h1>
+ <p class="sub">Discover your age — down to the second ✦</p>
+
+ <div class="inputs">
+  <div class="field"><label>Date</label><input id="day" type="number" min="1" max="31" placeholder="DD"></div>
+  <div class="field"><label>Month</label><input id="month" type="number" min="1" max="12" placeholder="MM"></div>
+  <div class="field"><label>Year</label><input id="year" type="number" min="1" placeholder="YYYY"></div>
+ </div>
+ <button onclick="startAge()">Calculate My Age</button>
+ <div id="error"></div>
+
+ <section class="results" id="results">
+  <div class="card"><div class="num" id="years">0</div><div class="lab">Years</div></div>
+  <div class="card"><div class="num" id="months">0</div><div class="lab">Months</div></div>
+  <div class="card"><div class="num" id="days">0</div><div class="lab">Days</div></div>
+  <div class="card"><div class="num" id="hours">0</div><div class="lab">Hours</div></div>
+  <div class="card"><div class="num" id="minutes">0</div><div class="lab">Minutes</div></div>
+  <div class="card"><div class="num" id="seconds">0</div><div class="lab"><span class="live-dot"></span>Seconds</div></div>
+ </section>
+
+ <div class="birthday" id="birthday">
+  <small>Next Birthday Countdown</small>
+  <strong id="birthdayText">—</strong>
+ </div>
+</main>
+
+<script>
+let birth = null, timer = null;
+
+function validBirth(d,m,y){
+ const x=new Date(y,m-1,d);
+ return x.getFullYear()===y && x.getMonth()===m-1 && x.getDate()===d;
+}
+function startAge(){
+ const d=+document.getElementById('day').value;
+ const m=+document.getElementById('month').value;
+ const y=+document.getElementById('year').value;
+ const err=document.getElementById('error');
+ err.textContent='';
+ if(!d||!m||!y){err.textContent='Please enter your complete date of birth.';return}
+ if(!validBirth(d,m,y)){err.textContent='Please enter a valid date.';return}
+ birth=new Date(y,m-1,d,0,0,0,0);
+ if(birth>new Date()){err.textContent='Date of birth cannot be in the future.';return}
+ document.getElementById('results').classList.add('show');
+ document.getElementById('birthday').classList.add('show');
+ if(timer) clearInterval(timer);
+ updateAge();
+ timer=setInterval(updateAge,1000);
+}
+function updateAge(){
+ if(!birth)return;
+ const now=new Date();
+
+ let years=now.getFullYear()-birth.getFullYear();
+ let months=now.getMonth()-birth.getMonth();
+ let days=now.getDate()-birth.getDate();
+ if(days<0){
+   months--;
+   days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();
+ }
+ if(months<0){years--;months+=12}
+
+ const diff=now-birth;
+ const totalHours=Math.floor(diff/3600000);
+ const totalMinutes=Math.floor(diff/60000);
+ const totalSeconds=Math.floor(diff/1000);
+
+ document.getElementById('years').textContent=years;
+ document.getElementById('months').textContent=months;
+ document.getElementById('days').textContent=days;
+ document.getElementById('hours').textContent=totalHours.toLocaleString();
+ document.getElementById('minutes').textContent=totalMinutes.toLocaleString();
+ document.getElementById('seconds').textContent=totalSeconds.toLocaleString();
+
+ updateBirthday(now);
+}
+function updateBirthday(now){
+ let next=new Date(now.getFullYear(),birth.getMonth(),birth.getDate(),0,0,0,0);
+ if(next<=now) next=new Date(now.getFullYear()+1,birth.getMonth(),birth.getDate(),0,0,0,0);
+ let diff=next-now;
+ const dd=Math.floor(diff/86400000); diff%=86400000;
+ const hh=Math.floor(diff/3600000); diff%=3600000;
+ const mm=Math.floor(diff/60000); diff%=60000;
+ const ss=Math.floor(diff/1000);
+ document.getElementById('birthdayText').innerHTML=
+   `<span>${dd}</span> days &nbsp; <span>${hh}</span> hours &nbsp; <span>${mm}</span> min &nbsp; <span>${ss}</span> sec`;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')startAge()});
+
+// Lightweight floating particles
+const box=document.getElementById('particles');
+for(let i=0;i<34;i++){
+ const p=document.createElement('i');
+ p.className='particle';
+ const size=1+Math.random()*4;
+ p.style.width=size+'px';p.style.height=size+'px';
+ p.style.left=Math.random()*100+'%';
+ p.style.animationDuration=(8+Math.random()*15)+'s';
+ p.style.animationDelay=(-Math.random()*20)+'s';
+ p.style.opacity=Math.random()*.7;
+ box.appendChild(p);
+}
+</script>
+</body>
+</html>
